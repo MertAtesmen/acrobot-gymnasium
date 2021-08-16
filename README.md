@@ -1,2 +1,2 @@
 # acrobot
-RL for Gym acrobot
+RL agent for Gym acrobot environment
