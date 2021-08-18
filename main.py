@@ -12,7 +12,7 @@ for i in range(1000):
     env.render()
     time.sleep(1 / 11)
 
-    action = 0
+    action = env.action_space.sample()
     print(f'Action {i} : {action}')
 
     observation, reward, done, info = env.step(action)
