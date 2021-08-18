@@ -1,5 +1,5 @@
 # acrobot
-RL agent for Gym acrobot environment
+Use of Deep Q-Learning to build a RL Agent. Case of the [Gym Acrobot-v1](https://gym.openai.com/envs/Acrobot-v1/) environment.
 
 ## Installation
 
