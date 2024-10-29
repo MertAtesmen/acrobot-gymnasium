@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import torch.nn as nn
 import torch.optim as optim
 
@@ -11,7 +11,7 @@ if __name__ == '__main__':
     env_name = 'Acrobot-v1'
     env = gym.make(env_name)
     model = Model(policy_net=nets.simple_DQN().to(devices.cuda_otherwise_cpu), target_net=nets.simple_DQN().to(devices.cuda_otherwise_cpu))
-    optimizer = optim.RMSprop(model.policy_net.parameters())
+    optimizer = optim.RMSprop(params=model.policy_net.parameters())
     criterion = nn.SmoothL1Loss()
 
     training = Training(

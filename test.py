@@ -1,7 +1,7 @@
 import time
 from itertools import count
 
-import gym
+import gymnasium as gym
 
 import devices
 import nets
@@ -14,18 +14,24 @@ if __name__ == '__main__':
     model = Model(policy_net=nets.simple_DQN().to(devices.cuda_otherwise_cpu),
                   target_net=nets.simple_DQN().to(devices.cuda_otherwise_cpu))
     model.load('state.pt')
+    
+    # env = gym.make(env_name)
+    # render_mode = 'human' so we can see the gameplay
+    env = gym.make(env_name, render_mode = 'human')
+    # GYMNASIUM CHANGE
+    # env.reset()
 
-    env = gym.make(env_name)
-    env.reset()
-
-    state = env.reset()
+    # state = env.reset()
+    state, _ = env.reset()
     state = utils.tensorize_state(state).to(devices.cuda_otherwise_cpu)
 
     for t in count():
-        env.render()
-        time.sleep(1 / 12)
+        # env.render()
         action = model.select_action(state, train=False)
-        state, reward, done, _ = env.step(action.item())
+        # GYMNASIUM CHANGE
+        # state, reward, done, _ = env.step(action.item())
+        state, reward, terminated, truncated, _ = env.step(action.item())
+        done = terminated or truncated
         state = utils.tensorize_state(state).to(devices.cuda_otherwise_cpu)
         if done:
             break

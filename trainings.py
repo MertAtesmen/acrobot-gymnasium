@@ -62,15 +62,20 @@ class Training:
             print(f'------ epoch {i_epoch}', end='')
             losses = []
 
-            state = self.env.reset()
+            # GYMNASIUM CHANGE
+            # state = self.env.reset()
+            state, _ = self.env.reset()
             state = utils.tensorize_state(state).to(devices.cuda_otherwise_cpu)
             for t in count():
-                self.env.render()
+                # self.env.render()
 
                 self.model.eval()
                 action = self.model.select_action(state)
 
-                next_state, reward, done, _ = self.env.step(action.item())
+                # GYMNASIUM CHANGE
+                # next_state, reward, done, _ = self.env.step(action.item())
+                next_state, reward, terminated, truncated, _ = self.env.step(action.item())
+                done = terminated or truncated
 
                 next_state = utils.tensorize_state(next_state).to(devices.cuda_otherwise_cpu)
                 reward = torch.tensor([reward], device=devices.cuda_otherwise_cpu)
