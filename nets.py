@@ -34,16 +34,28 @@ class DQN(nn.Module):
 
 
 def simple_DQN():
+    # return nn.Sequential(
+    #     nn.Linear(6, 256),
+    #     nn.BatchNorm1d(256),
+    #     nn.ReLU(),
+
+
+    #     nn.Linear(256, 64),
+    #     nn.BatchNorm1d(64),
+    #     nn.ReLU(),
+
+    #     nn.Linear(64, 3),
+    # )
+    
+    # Kodama, N., Harada, T., & Miyazaki, K. (2019). Deep Reinforcement Learning with Dual Targeting Algorithm. 2019 International Joint Conference on Neural Networks
     return nn.Sequential(
-        nn.Linear(6, 256),
-        nn.BatchNorm1d(256),
+        nn.Linear(6, 128),
         nn.ReLU(),
 
-
-        nn.Linear(256, 64),
-        nn.BatchNorm1d(64),
+        nn.Linear(128, 64),
         nn.ReLU(),
 
         nn.Linear(64, 3),
     )
+
 

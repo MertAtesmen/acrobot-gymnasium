@@ -8,6 +8,24 @@ import utils
 from models import Model
 from rl import ReplayMemory, Transition
 
+# Kodama, N., Harada, T., & Miyazaki, K. (2019). Deep Reinforcement Learning with Dual Targeting Algorithm. 2019 International Joint Conference on Neural Networks
+class OrnsteinUhlenbeckNoise:
+    def __init__(self, action_dim, theta=0.15, sigma=0.3, dt=1e-2, x_initial=None):
+        self.theta = theta
+        self.sigma = sigma
+        self.dt = dt
+        self.action_dim = action_dim
+        self.x_initial = x_initial
+        self.reset()
+
+    def reset(self):
+        self.x_prev = np.zeros(self.action_dim) if self.x_initial is None else self.x_initial
+
+    def generate(self):
+        x = self.x_prev + self.theta * (0 - self.x_prev) * self.dt + \
+            self.sigma * np.sqrt(self.dt) * np.random.normal(size=self.action_dim)
+        self.x_prev = x
+        return torch.from_numpy(x).to(devices.cuda_otherwise_cpu)
 
 class Training:
 
@@ -58,19 +76,31 @@ class Training:
 
 
     def train(self):
+        action_dim = 1
+        ou_noise = OrnsteinUhlenbeckNoise(action_dim)
+        
         for i_epoch in range(self.n_epochs):
             print(f'------ epoch {i_epoch}', end='')
             losses = []
-
+            
             # GYMNASIUM CHANGE
             # state = self.env.reset()
             state, _ = self.env.reset()
             state = utils.tensorize_state(state).to(devices.cuda_otherwise_cpu)
+            
+            # PAPER
+            ou_noise.reset()
+
             for t in count():
                 # self.env.render()
 
                 self.model.eval()
                 action = self.model.select_action(state)
+                
+                # PAPER
+                noisy_action = action + ou_noise.generate()
+                noisy_action = torch.clip(noisy_action, 0, 2)
+
 
                 # GYMNASIUM CHANGE
                 # next_state, reward, done, _ = self.env.step(action.item())
